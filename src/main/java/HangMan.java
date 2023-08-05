@@ -255,8 +255,8 @@ public class HangMan {
         }
 
         System.out.println("\n".repeat(100));
-        System.out.println("THE WORD IS (" + word + ")"); // debug: print the word
-        System.out.println();
+        //System.out.println("THE WORD IS (" + word + ")"); // debug: print the word
+        //System.out.println();
 
         word_length = word.length();
         System.out.println("Guess a letter or the word: (" + word_length + " characters)");
