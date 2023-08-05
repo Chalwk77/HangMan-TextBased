@@ -1,5 +1,5 @@
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -7,38 +7,40 @@ import java.util.Scanner;
 
 public class HangMan {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
-        System.out.println("Welcome to Hangman\n");
-        System.out.println(" ________");
-        System.out.println(" |      |");
-        System.out.println(" O      |");
-        System.out.println("\\ /     |");
-        System.out.println(" |      |");
-        System.out.println("/ \\     |");
-        System.out.println("       ===\n");
+        System.out.println("======================================");
+        System.out.println("Welcome to Hangman - By Jericho Crosby\n");
+        showHangMan();
         System.out.println("One player or two players? (1 or 2)");
+        System.out.println("======================================");
 
         String word;
         Scanner keyboard = new Scanner(System.in);
         String player = keyboard.nextLine();
 
         if (player.equals("1")) {
-            Scanner scanner = new Scanner(new File("words.txt"));
+
+            InputStream is = HangMan.class.getClassLoader().getResourceAsStream("words.txt");
+            assert is != null;
+            Scanner scanner = new Scanner(is);
+
             List<String> words = new ArrayList<>();
             while (scanner.hasNext()) {
-                words.add(scanner.nextLine());
+                String word_from_file = scanner.nextLine();
+                if (word_from_file.length() > 4) {
+                    words.add(word_from_file);
+                }
             }
             word = words.get(new Random().nextInt(words.size()));
         } else {
 
             System.out.println("Player 1, please enter your word:");
             word = keyboard.nextLine();
-
-            String new_line = "\n";
-            System.out.println(new_line.repeat(100));
         }
 
+        String new_line = "\n";
+        System.out.println(new_line.repeat(100));
         //System.out.println(word); // debug: print the word
 
         int word_length = word.length();
@@ -53,20 +55,21 @@ public class HangMan {
         while (true) {
 
             String input = keyboard.nextLine();
-            System.out.println("wrongCount: " + wrongCount);
-            if (wrongCount >= 7) {
-                System.out.println("\u001B[31m" + "YOU LOSE! THE WORD WAS " + word + ". \u001B[0m");
+
+            if (wrongCount >= 6) {
+                System.out.println("YOU LOSE! THE WORD WAS " + word);
+                showHangMan();
                 break;
             } else if (input.length() > 1) {
                 if (input.equals(word)) {
-                    System.out.println("\u001B[32m" + "YOU WIN!" + "\u001B[0m");
+                    System.out.println("YOU WIN!");
                     break;
                 } else {
-                    System.out.println("\u001B[31m" + "INCORRECT!" + "\u001B[0m");
+                    System.out.println("INCORRECT!");
                     wrongCount++;
                 }
             } else if (!getPlayerGuess(input, word, playerGuesses)) {
-                System.out.println("\u001B[31m" + "INCORRECT!" + "\u001B[0m");
+                System.out.println("INCORRECT!");
                 wrongCount++;
             }
 
@@ -74,11 +77,21 @@ public class HangMan {
             System.out.println("Guess a letter or the word: (" + word_length + " characters)");
             boolean word_state = printWordState(word, playerGuesses);
             if (word_state) {
-                System.out.println("\u001B[32m" + "YOU WIN!" + "\u001B[0m");
+                System.out.println("YOU WIN!");
                 break;
             }
         }
     }
+
+    static String[] hangman = {
+            " ________",
+            " |      |",
+            " O      |",
+            "\\ /     |",
+            " |      |",
+            "/ \\     |",
+            "       ==="
+    };
 
     private static void printHangedMan(int wrongCount) {
 
@@ -154,4 +167,11 @@ public class HangMan {
 
         return (word.length() == correctCount);
     }
+
+    private static void showHangMan() {
+        for (String line : hangman) {
+            System.out.println(line);
+        }
+    }
+
 }
