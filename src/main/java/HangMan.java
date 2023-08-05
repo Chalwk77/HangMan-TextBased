@@ -94,7 +94,7 @@ public class HangMan {
             },
             {
                     "+----------+",
-                    "|          |      - (HELP!)",
+                    "|          |      - (I'M GOING TO HANG!)",
                     "|          |    -",
                     "|        (0_0) -",
                     "|          |",
@@ -128,7 +128,7 @@ public class HangMan {
             },
             {
                     "+----------+",
-                    "|          |      - (SERIOUSLY HELP!)",
+                    "|          |      - (SERIOUSLY HELP!!)",
                     "|          |    -",
                     "|        (0_o) -",
                     "|         /|\\",
@@ -263,11 +263,9 @@ public class HangMan {
         keyboard = new Scanner(System.in);
 
         if (keyboard.nextLine().equals("1")) {
-
             InputStream resource = HangMan.class.getClassLoader().getResourceAsStream("words.txt");
             assert resource != null;
             Scanner scanner = new Scanner(resource);
-
             List<String> words = new ArrayList<>();
             while (scanner.hasNext()) {
                 String word_from_file = scanner.nextLine();
@@ -279,8 +277,6 @@ public class HangMan {
         } else {
             System.out.println("Player 1, please enter your word:");
             word = new StringBuilder(keyboard.nextLine());
-
-            // just in case the player doesn't enter a word:
             if (word.isEmpty()) {
                 String[] letters = "abcdefghijklmnopqrstuvwxyz".split("");
                 word = new StringBuilder();
@@ -337,31 +333,25 @@ public class HangMan {
                 }
             }
 
-            if (checkGameOver(input)) {
-                continue;
-            }
+            checkGameOver(input);
         }
     }
 
-    public static boolean checkGameOver(String input) {
+    public static void checkGameOver(String input) {
         if (game_over == 1) {
             game_over++;
             System.out.println(" ");
             System.out.println("Play again? (Y/N)");
-            return true;
         } else if (game_over > 1) {
             if (input.equals("y")) {
                 Init();
-                return true;
             } else if (input.equals("n")) {
                 System.out.println("Thanks for playing!");
                 System.exit(0);
             } else {
                 System.out.println("Invalid input!");
-                return false;
             }
         }
-        return false;
     }
 
     private static void printHangedMan() {
@@ -371,7 +361,7 @@ public class HangMan {
     }
 
     private static boolean getPlayerGuess(String input, StringBuilder word, List<Character> guesses) {
-        char guess = input.charAt(0); // get first character of the word
+        char guess = input.charAt(0);
         guesses.add(guess);
         return word.toString().contains(input);
     }
