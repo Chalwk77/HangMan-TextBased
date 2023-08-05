@@ -198,7 +198,7 @@ public class HangMan {
                     "+----------+",
                     "|          |",
                     "|          |",
-                    "|        (×_×)",
+                    "|        (*_*)",
                     "|         /|\\",
                     "|        | | |",
                     "|         / \\",
@@ -212,20 +212,21 @@ public class HangMan {
                     "+------------------------------+",
             }
     };
+    private static StringBuilder word;
+    private static Scanner keyboard;
+    private static List<Character> playerGuesses;
+    private static int game_over;
+    private static int tries;
+    private static int word_length;
 
-    public static void main(String[] args) {
 
-        System.out.println("======================================");
-        System.out.println("Welcome to Hangman - By Jericho Crosby\n");
-        showHangMan();
-        System.out.println("One player or two players? (1 or 2)");
-        System.out.println("======================================");
+    public static void Init() {
 
-        StringBuilder word;
-        Scanner keyboard = new Scanner(System.in);
-        String player = keyboard.nextLine();
+        game_over = 0;
+        showLogo();
 
-        if (player.equals("1")) {
+        keyboard = new Scanner(System.in);
+        if (keyboard.nextLine().equals("1")) {
 
             InputStream resource = HangMan.class.getClassLoader().getResourceAsStream("words.txt");
             assert resource != null;
@@ -253,71 +254,105 @@ public class HangMan {
             }
         }
 
-        String new_line = "\n";
-        System.out.println(new_line.repeat(100));
-        //System.out.println(word); // debug: print the word
+        System.out.println("\n".repeat(100));
+        System.out.println("THE WORD IS (" + word + ")"); // debug: print the word
+        System.out.println();
 
-        int word_length = word.length();
-
-        List<Character> playerGuesses = new ArrayList<>();
-        int wrongCount = 0;
-
+        word_length = word.length();
         System.out.println("Guess a letter or the word: (" + word_length + " characters)");
-        printHangedMan(wrongCount);
+
+        playerGuesses = new ArrayList<>();
+        tries = 0;
+
+        printHangedMan();
         printWordState(word.toString(), playerGuesses);
+    }
+
+    public static void main(String[] args) {
+
+        Init();
 
         while (true) {
 
             String input = keyboard.nextLine();
 
-            if (wrongCount >= hangman.length - 1) {
+            // No more tries:
+            if (tries >= hangman.length - 1) {
                 System.out.println("YOU LOSE! THE WORD WAS \"" + word + "\"");
-                showHangMan();
-                break;
+                showDeadHangMan();
+                game_over = game_over == 0 ? 1 : game_over;
+
+                // more than one character entered:
             } else if (input.length() > 1) {
                 if (input.contentEquals(word)) {
                     System.out.println("YOU WIN!");
-                    break;
+                    game_over = game_over == 0 ? 1 : game_over;
+
+                    // incorrect word:
                 } else {
                     System.out.println("(" + input + ") IS INCORRECT!");
-                    wrongCount++;
+                    tries++;
                 }
-            } else if (!getPlayerGuess(input, word.toString(), playerGuesses)) {
+
+                // single character entered:
+            } else if (!getPlayerGuess(input, String.valueOf(word), playerGuesses)) {
                 System.out.println("(" + input + ") IS INCORRECT!");
-                wrongCount++;
+                tries++;
             }
 
-            printHangedMan(wrongCount);
+            printHangedMan();
+
+            // Check if all characters have been guessed:
             System.out.println("Guess a letter or the word: (" + word_length + " characters)");
-            boolean word_state = printWordState(word.toString(), playerGuesses);
+            boolean word_state = printWordState(String.valueOf(word), playerGuesses);
             if (word_state) {
                 System.out.println("YOU WIN!");
+                game_over = game_over == 0 ? 1 : game_over;
+            }
+
+            if (gameOver(input)) {
                 break;
             }
         }
     }
 
-    private static void printHangedMan(int wrongCount) {
-        for (String line : hangman[wrongCount]) {
+    public static boolean restart(String input) {
+        return input.equals("y");
+    }
+
+    public static boolean gameOver(String input) {
+        if (game_over == 1) {
+            game_over = 2;
+            System.out.println("Would you like to play again? (y/n)");
+            return false;
+        } else if (game_over == 2 && restart(input)) {
+            Init();
+            return true;
+        }
+        return false;
+    }
+
+    private static void printHangedMan() {
+        for (String line : hangman[tries]) {
             System.out.println(line);
         }
     }
 
-    private static boolean getPlayerGuess(String input, String word, List<Character> playerGuesses) {
+    private static boolean getPlayerGuess(String input, String word, List<Character> guesses) {
         char guess = input.charAt(0); // get first character of the word
-        playerGuesses.add(guess);
+        guesses.add(guess);
 
         return word.contains(input);
     }
 
-    private static boolean printWordState(String word, List<Character> playerGuesses) {
+    private static boolean printWordState(String word, List<Character> guesses) {
         int correctCount = 0;
 
         System.out.println();
         for (int i = 0; i < word.length(); i++) {
 
             char guess = word.charAt(i);
-            if (playerGuesses.contains(guess)) {
+            if (guesses.contains(guess)) {
                 System.out.print(guess);
                 correctCount++;
             } else {
@@ -329,9 +364,17 @@ public class HangMan {
         return (word.length() == correctCount);
     }
 
-    private static void showHangMan() {
+    private static void showDeadHangMan() {
         for (String line : hangman[hangman.length - 1]) {
             System.out.println(line);
         }
+    }
+
+    private static void showLogo() {
+        System.out.println("======================================");
+        System.out.println("Welcome to Hangman\n");
+        showDeadHangMan();
+        System.out.println("One player or two players? (1 or 2)");
+        System.out.println("======================================");
     }
 }
