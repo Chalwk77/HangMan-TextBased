@@ -15,7 +15,7 @@ public class HangMan {
         System.out.println("One player or two players? (1 or 2)");
         System.out.println("======================================");
 
-        String word;
+        StringBuilder word;
         Scanner keyboard = new Scanner(System.in);
         String player = keyboard.nextLine();
 
@@ -32,10 +32,19 @@ public class HangMan {
                     words.add(word_from_file);
                 }
             }
-            word = words.get(new Random().nextInt(words.size()));
+            word = new StringBuilder(words.get(new Random().nextInt(words.size())));
         } else {
             System.out.println("Player 1, please enter your word:");
-            word = keyboard.nextLine();
+            word = new StringBuilder(keyboard.nextLine());
+
+            // just in case the player doesn't enter a word:
+            if (word.isEmpty()) {
+                String[] letters = "abcdefghijklmnopqrstuvwxyz".split("");
+                word = new StringBuilder();
+                for (int i = 0; i < 10; i++) {
+                    word.append(letters[new Random().nextInt(letters.length)]);
+                }
+            }
         }
 
         String new_line = "\n";
@@ -49,7 +58,7 @@ public class HangMan {
 
         System.out.println("Guess a letter or the word: (" + word_length + " characters)");
         printHangedMan(wrongCount);
-        printWordState(word, playerGuesses);
+        printWordState(word.toString(), playerGuesses);
 
         while (true) {
 
@@ -60,21 +69,21 @@ public class HangMan {
                 showHangMan();
                 break;
             } else if (input.length() > 1) {
-                if (input.equals(word)) {
+                if (input.contentEquals(word)) {
                     System.out.println("YOU WIN!");
                     break;
                 } else {
                     System.out.println("(" + input + ") IS INCORRECT!");
                     wrongCount++;
                 }
-            } else if (!getPlayerGuess(input, word, playerGuesses)) {
+            } else if (!getPlayerGuess(input, word.toString(), playerGuesses)) {
                 System.out.println("(" + input + ") IS INCORRECT!");
                 wrongCount++;
             }
 
             printHangedMan(wrongCount);
             System.out.println("Guess a letter or the word: (" + word_length + " characters)");
-            boolean word_state = printWordState(word, playerGuesses);
+            boolean word_state = printWordState(word.toString(), playerGuesses);
             if (word_state) {
                 System.out.println("YOU WIN!");
                 break;
