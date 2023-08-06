@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import org.fusesource.jansi.AnsiConsole;
+
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class HangMan {
 
@@ -256,6 +259,7 @@ public class HangMan {
 
     public static void Init() {
 
+        AnsiConsole.systemInstall();
         tries = 0;
         game_over = 0;
         showLogo();
@@ -275,7 +279,8 @@ public class HangMan {
             }
             word = new StringBuilder(words.get(new Random().nextInt(words.size())));
         } else {
-            System.out.println("Player 1, please enter your word:");
+
+            sendMessage("green", "Player 1, please enter your word: ");
             word = new StringBuilder(keyboard.nextLine());
             if (word.isEmpty()) {
                 String[] letters = "abcdefghijklmnopqrstuvwxyz".split("");
@@ -289,7 +294,7 @@ public class HangMan {
         System.out.println("\n".repeat(100));
 
         word_length = word.length();
-        System.out.println("Guess a letter or the word: (" + word_length + " characters)");
+        sendMessage("white", "Guess a letter or the word: (" + word_length + " characters)");
 
         playerGuesses = new ArrayList<>();
 
@@ -306,18 +311,17 @@ public class HangMan {
             if (game_over == 0) {
 
                 if (input.isEmpty()) {
-                    System.out.println("Invalid input!");
+                    sendMessage("red", "Invalid input!");
                     continue;
                 } else if (input.length() > 1) {
                     if (input.contentEquals(word)) {
                         game_over = game_over == 0 ? 1 : game_over;
-                        System.out.println("YOU WIN!");
+                        sendMessage("green", "YOU WIN");
                     } else {
-                        System.out.println("(" + input + ") IS INCORRECT!");
                         tries++;
                     }
                 } else if (!getPlayerGuess(input, word, playerGuesses)) {
-                    System.out.println("(" + input + ") IS INCORRECT!");
+                    sendMessage("red", "(" + input + ") IS INCORRECT!");
                     tries++;
                 }
 
@@ -325,9 +329,9 @@ public class HangMan {
                     game_over = game_over == 0 ? 1 : game_over;
                     printHangedMan();
                 } else {
-                    System.out.println("Guess a letter or the word: (" + word_length + " characters)");
+                    sendMessage("white", "Guess a letter or the word: (" + word_length + " characters)");
                     if (printWordState(word, playerGuesses)) {
-                        System.out.println("YOU WIN!");
+                        sendMessage("green", "YOU WIN!");
                         game_over = game_over == 0 ? 1 : game_over;
                     }
                 }
@@ -341,15 +345,15 @@ public class HangMan {
         if (game_over == 1) {
             game_over++;
             System.out.println(" ");
-            System.out.println("Play again? (Y/N)");
+            sendMessage("white", "Play Again? (Y/N)");
         } else if (game_over > 1) {
             if (input.equalsIgnoreCase("y")) {
                 Init();
             } else if (input.equalsIgnoreCase("n")) {
-                System.out.println("Thanks for playing!");
+                sendMessage("green", "Thanks for playing!");
                 System.exit(0);
             } else {
-                System.out.println("Invalid input!");
+                sendMessage("red", "Invalid Input");
             }
         }
     }
@@ -395,96 +399,15 @@ public class HangMan {
     }
 
     private static void showLogo() {
-        System.out.println("======================================");
-        System.out.println("Welcome to Hangman\n");
+        sendMessage("white", "======================================");
+        sendMessage("white", "Welcome to Hangman\n");
         showDeadHangMan();
-        System.out.println("One player or two players? (1 or 2)");
-        System.out.println("======================================");
+        sendMessage("white", "One player or two players? (1 or 2)");
+        sendMessage("white", "======================================");
     }
+
+    public static void sendMessage(String color, String message) {
+        System.out.println(ansi().render("@|" + color + " " + message + "|@ "));
+    }
+
 }
-
-
-/*
-
-
-"+----------+",
-"|          |",
-"|          |",
-"|        (*_*)",
-"|        /0|0\\",
-"|        | | |",
-"|         / \\",
-"|        /   \\",
-"|       ~     ~",
-"|",
-"+------+------------------+",
-"|                         |",
-"|     R. I. P             +----+",
-"|                              |",
-"+------------------------------+"
-
-"+----------+",
-"|          |",
-"|          |",
-"|        (*_*)",
-"|      /(.) (.)\\",
-"|     |   ( )   |",
-"|     &  /   \\  &",
-"|       /     \\",
-"|     --       --",
-"|",
-"+------+------------------+",
-"|                         |",
-"|     R. I. P             +----+",
-"|                              |",
-"+------------------------------+"
-
-"+----------+",
-"|          |",
-"|          |",
-"|       ( •̀_•́ )",
-"|       /(   )\\",
-"|      |  ( )  |",
-"|      & /   \\ &",
-"|       /     \\",
-"|     --       --",
-"|",
-"+------+------------------+",
-"|                         |",
-"|     R. I. P             +----+",
-"|                              |",
-"+------------------------------+"
-
-"+----------+",
-"|          |",
-"|          |",
-"|        (•_*)",
-"|       /(   )\\",
-"|      |  ( )  |",
-"|      & /   \\ &",
-"|       /     \\",
-"|       '     '",
-"|",
-"+------+------------------+",
-"|                         |",
-"|     R. I. P             +----+",
-"|                              |",
-"+------------------------------+"
-
-"+----------+",
-"|          |",
-"|          |",
-"|        (x_x)",
-"|       /(   )\\",
-"|      |  ( )  |",
-"|      & /   \\ &",
-"|       /     \\",
-"|       '     '",
-"|",
-"+------+------------------+",
-"|                         |",
-"|     R. I. P             +----+",
-"|                              |",
-"+------------------------------+"
-
-*/
