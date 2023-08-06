@@ -18,7 +18,6 @@ public class HangMan {
 
     static JSONObject hangmanJson;
     private static StringBuilder word;
-    private static Scanner keyboard;
     private static List<Character> playerGuesses;
     private static int game_over;
     private static int state;
@@ -129,12 +128,12 @@ public class HangMan {
                     }
                 }
             }
-            checkGameOver(input);
+            checkGameOver(input, keyboard);
         }
     }
 
     private static void showDesigns() {
-        
+
         sendMessage("white", "================================");
         sendMessage("green", "Choose the Hangman design (1-" + hangmanJson.length() + "): ");
         sendMessage("white", "================================");
@@ -149,7 +148,7 @@ public class HangMan {
         }
     }
 
-    public static void checkGameOver(String input) {
+    public static void checkGameOver(String input, Scanner keyboard) {
         if (game_over == 1) {
             game_over++;
             System.out.println(" ");
@@ -181,8 +180,6 @@ public class HangMan {
 
     private static boolean printWordState(StringBuilder word, List<Character> guesses) {
 
-        // TODO: Print letters that we've already used.
-
         printHangedMan();
 
         int correctCount = 0;
@@ -211,11 +208,11 @@ public class HangMan {
     }
 
     private static void showLogo() {
-        sendMessage("white", "======================================");
-        sendMessage("white", "Welcome to Hangman\n");
+        sendMessage("green", "======================================");
+        sendMessage("green", "Welcome to Hangman\n");
         showDeadHangMan();
-        sendMessage("white", "One player or two players? (1 or 2)");
-        sendMessage("white", "======================================");
+        sendMessage("green", "One player or two players? (1 or 2)");
+        sendMessage("green", "======================================");
     }
 
     public static void sendMessage(String color, String message) {
