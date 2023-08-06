@@ -84,7 +84,8 @@ public class HangMan {
 
         while (!design_chosen) {
 
-            sendMessage("green", "Choose the Hangman design (1- " + hangmanJson.length() + "): ");
+            showDesigns();
+
             String input = keyboard.nextLine();
             if (input.isEmpty() || !hangmanJson.has(input)) {
                 sendMessage("red", "Invalid input!");
@@ -132,6 +133,22 @@ public class HangMan {
         }
     }
 
+    private static void showDesigns() {
+        
+        sendMessage("white", "================================");
+        sendMessage("green", "Choose the Hangman design (1-" + hangmanJson.length() + "): ");
+        sendMessage("white", "================================");
+
+        for (int design = 1; design < hangmanJson.length() + 1; design++) {
+            JSONObject hanged_man = (JSONObject) hangmanJson.get(String.valueOf(design));
+            JSONArray ascii = hanged_man.getJSONArray("1");
+            sendMessage("green", "Design (" + design + "):");
+            for (int i = 0; i < ascii.length(); i++) {
+                System.out.println(ascii.get(i));
+            }
+        }
+    }
+
     public static void checkGameOver(String input) {
         if (game_over == 1) {
             game_over++;
@@ -150,9 +167,9 @@ public class HangMan {
     }
 
     private static void printHangedMan() {
-        JSONArray t = (JSONArray) hangmanJson.get(String.valueOf(state));
-        for (int i = 0; i < t.length(); i++) {
-            System.out.println(t.get(Integer.parseInt(String.valueOf(i))));
+        JSONArray ascii = (JSONArray) hangmanJson.get(String.valueOf(state));
+        for (int i = 0; i < ascii.length(); i++) {
+            System.out.println(ascii.get(Integer.parseInt(String.valueOf(i))));
         }
     }
 
@@ -187,9 +204,9 @@ public class HangMan {
     }
 
     private static void showDeadHangMan() {
-        JSONArray t = (JSONArray) hangmanJson.get("1");
-        for (int i = 0; i < t.length(); i++) {
-            System.out.println(t.get(Integer.parseInt(String.valueOf(i))));
+        JSONArray ascii = (JSONArray) hangmanJson.get("1");
+        for (int i = 0; i < ascii.length(); i++) {
+            System.out.println(ascii.get(Integer.parseInt(String.valueOf(i))));
         }
     }
 
