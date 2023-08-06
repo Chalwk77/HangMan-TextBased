@@ -18,7 +18,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>HangMan</mainClass>
+                  <mainClass>com.chalwk.HangMan</mainClass>
                 </transformer>
               </transformers>
             </configuration>
