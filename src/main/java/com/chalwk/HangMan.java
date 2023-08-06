@@ -16,7 +16,6 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class HangMan {
 
-    public static JSONArray hangman;
     static JSONObject hangmanJson;
     private static StringBuilder word;
     private static Scanner keyboard;
@@ -36,8 +35,10 @@ public class HangMan {
 
     public static void Init(Scanner keyboard) {
 
+        keyboard = (keyboard == null) ? new Scanner(System.in) : keyboard;
+
         AnsiConsole.systemInstall();
-        state = 1;
+        state = hangmanJson.length();
         game_over = 0;
         showLogo();
 
@@ -109,14 +110,14 @@ public class HangMan {
                         game_over = game_over == 0 ? 1 : game_over;
                         sendMessage("green", "YOU WIN");
                     } else {
-                        state++;
+                        state--;
                     }
                 } else if (!getPlayerGuess(input, word, playerGuesses)) {
                     sendMessage("red", "(" + input + ") IS INCORRECT!");
-                    state++;
+                    state--;
                 }
 
-                if (state >= hangmanJson.length()) {
+                if (state <= 1) {
                     game_over = game_over == 0 ? 1 : game_over;
                     printHangedMan();
                 } else {
@@ -127,7 +128,6 @@ public class HangMan {
                     }
                 }
             }
-
             checkGameOver(input);
         }
     }
@@ -163,6 +163,8 @@ public class HangMan {
     }
 
     private static boolean printWordState(StringBuilder word, List<Character> guesses) {
+
+        // TODO: Print letters that we've already used.
 
         printHangedMan();
 
@@ -202,5 +204,4 @@ public class HangMan {
     public static void sendMessage(String color, String message) {
         System.out.println(ansi().render("@|" + color + " " + message + "|@ "));
     }
-
 }
